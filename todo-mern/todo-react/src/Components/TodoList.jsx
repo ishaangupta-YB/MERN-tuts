@@ -1,31 +1,33 @@
-import  { useState } from 'react';
-import EditCard from './EditCard';
+import { useState, useMemo } from "react";
+import EditCard from "./EditCard";
 
 const TodoList = ({ todos, onToggleComplete, onEdit, onDelete }) => {
   const [showEditPopup, setShowEditPopup] = useState(false);
-  const [selectedTodoIndex, setSelectedTodoIndex] = useState(null);
+  const [selectedTodoId, setSelectedTodoId] = useState(null);
   const [showFinished, setShowFinished] = useState(false);
 
   const handleCloseEditPopup = () => {
     setShowEditPopup(false);
-    setSelectedTodoIndex(null);
+    setSelectedTodoId(null);
   };
 
   const handleUpdateTodo = (updatedTodo) => {
-    const updatedTodos = todos.map((todo, index) =>
-      index === selectedTodoIndex ? updatedTodo : todo
-    );
-    // Update todos in parent component
-    onEdit(updatedTodos);
+    onEdit(updatedTodo);
   };
 
-  const handleDeleteTodo = (index) => {
-    const updatedTodos = todos.filter((_, i) => i !== index);
-    // Update todos in parent component
-    onDelete(updatedTodos);
+  const handleDeleteTodo = (todoId) => {
+    onDelete(todoId);
   };
 
-  const filteredTodos = showFinished ? todos : todos.filter((todo) => !todo.completed);
+  const sortedTodos = useMemo(() => {
+    return todos
+      .filter((todo) => (showFinished ? todo.completed : !todo.completed))
+      .sort((a, b) => {
+        const dateA = new Date(a.pending);
+        const dateB = new Date(b.pending);
+        return dateA - dateB;
+      });
+  }, [todos, showFinished]);
 
   return (
     <div>
@@ -38,44 +40,39 @@ const TodoList = ({ todos, onToggleComplete, onEdit, onDelete }) => {
           className="form-checkbox mr-2"
         />
         <label htmlFor="show" className="mx-2">
-          Show Finished
+          {showFinished ? "Hide Finished" : "Show Finished"}
         </label>
       </div>
       <div className="h-[1px] bg-black opacity-15 w-[90%] mx-auto my-2"></div>
       <h2 className="text-2xl font-bold">Your Todos</h2>
       <div className="todos">
-        {filteredTodos.map((item, index) => (
+        {sortedTodos.map((todo) => (
           <div
-            key={index}
-            className={`todo ${
-              item.completed ? 'line-through' : ''
-            } flex border-b border-gray-300 py-2`}
+            key={todo._id}
+            className={`todo flex border-b border-gray-300 py-2`}
           >
             <div className="checkbox flex items-center justify-center mr-4">
               <input
                 type="checkbox"
-                id={`completed-${index}`}
-                checked={item.completed}
-                onChange={() => onToggleComplete(index)}
+                id={`completed-${todo._id}`}
+                checked={todo.completed}
+                onChange={() => onToggleComplete(todo._id)}
                 className="form-checkbox mr-2"
               />
-              <label htmlFor={`completed-${index}`} className="select-none">
-                {item.completed ? 'Completed' : 'Not Completed'}
-              </label>
             </div>
             <div className="details flex-1">
-              <p className="font-semibold">{item.title}</p>
+              <p className="font-semibold">{todo.title}</p>
               <p>
-                {item.description.length > 40
-                  ? item.description.substring(0, 40) + '...'
-                  : item.description}
+                {todo.description.length > 40
+                  ? todo.description.substring(0, 40) + "..."
+                  : todo.description}
               </p>
-              <p>Pending: {item.pending}</p>
+              <p>Pending: {todo.pending}</p>
             </div>
             <div className="buttons flex items-center">
               <button
                 onClick={() => {
-                  setSelectedTodoIndex(index);
+                  setSelectedTodoId(todo._id);
                   setShowEditPopup(true);
                 }}
                 className="bg-violet-600 hover:bg-violet-850 px-4 py-2 text-sm font-bold text-white rounded-md mx-1 transition-colors duration-300"
@@ -83,8 +80,8 @@ const TodoList = ({ todos, onToggleComplete, onEdit, onDelete }) => {
                 Edit
               </button>
               <button
-                onClick={() => handleDeleteTodo(index)}
-                className="bg-violet-600 hover:bg-violet-850 px-4 py-2 text-sm font-bold text-white rounded-md mx-1 transition-colors duration -300"
+                onClick={() => handleDeleteTodo(todo._id)}
+                className="bg-violet-600 hover:bg-violet-850 px-4 py-2 text-sm font-bold text-white rounded-md mx-1 transition-colors duration-300"
               >
                 Delete
               </button>
@@ -94,7 +91,7 @@ const TodoList = ({ todos, onToggleComplete, onEdit, onDelete }) => {
       </div>
       {showEditPopup && (
         <EditCard
-          todo={todos[selectedTodoIndex]}
+          todo={todos.find((todo) => todo._id === selectedTodoId)}
           onUpdate={handleUpdateTodo}
           onClose={handleCloseEditPopup}
         />

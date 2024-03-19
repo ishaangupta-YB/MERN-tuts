@@ -46,6 +46,7 @@ const AddTodo = ({ onAdd }) => {
           type="text"
           className="form-input rounded-full px-5 py-1 mb-2"
           maxLength={50}
+          required
         />
         <textarea
           rows={2}
