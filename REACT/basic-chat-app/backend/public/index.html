@@ -91,7 +91,11 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        const socket = io();
+        const socket = io({
+            auth: {
+                serverOffset: 0
+            }
+        });
         const form = document.getElementById('form')
         const input = document.getElementById('input')
         const messages = document.getElementById('messages')
@@ -99,27 +103,28 @@
 
         form.addEventListener('submit', (e) => {
             e.preventDefault()
-            if(input.value) {
+            if (input.value) {
                 socket.emit('chat msg', input.value);
-                input.value=''
+                input.value = ''
             }
         })
 
-        disconnectBtn.addEventListener('click',(e) => {
-            if(socket.connected) {
+        disconnectBtn.addEventListener('click', (e) => {
+            if (socket.connected) {
                 socket.disconnect()
-                disconnectBtn.textContent='Connect'
-            }else {
+                disconnectBtn.textContent = 'Connect'
+            } else {
                 socket.connect()
-                disconnectBtn.textContent='Disconnect'
+                disconnectBtn.textContent = 'Disconnect'
             }
         })
 
-        socket.on('chat msg', (msg) => {
+        socket.on('chat msg', (msg,serverOffset) => {
             const item = document.createElement('li')
             item.textContent = msg
-            messages.insertAdjacentElement('beforeend',item)
-            window.scrollTo(0,document.body.scrollHeight)
+            messages.insertAdjacentElement('beforeend', item)
+            window.scrollTo(0, document.body.scrollHeight)
+            socket.auth.serverOffset = serverOffset;
         })
     </script>
 </body>
