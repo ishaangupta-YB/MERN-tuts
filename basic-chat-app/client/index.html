@@ -4,27 +4,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.IO Chat App</title>
     <link rel="stylesheet" href="style.css">
-    <title>Chat App</title>
 </head>
 
 <body>
-    <h1>Socket Chat App</h1>
-    <div class="container">
-        <div class="chatbox">
-            <ul id="messagelist"></ul>
-            <form class="input">
-                <input type="text" placeholder="Type your message ..." />
-                <button>Send</button>
-            </form>
-        </div>
-        <br />
-        <div class="activeusers">
-            <h2>Active Users</h2>
-            <ul id="users"></ul>
-        </div>
+    <div id="roomForm">
+        <input type="text" id="roomInput" placeholder="Enter Room Name">
+        <input type="text" id="usernameInput" placeholder="Enter Username">
+        <button onclick="joinRoom()">Join Room</button>
+        <button onclick="createRoom()">Create Room</button>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+
+    <div id="chat" style="display: none;">
+        <div id="userList"></div>
+        <div id="messages"></div>
+        <input type="text" id="messageInput" placeholder="Type your message">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+        integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+        crossorigin="anonymous"></script>
     <script src="index.js"></script>
 </body>
 
