@@ -1,5 +1,5 @@
-import Input from "../../../components/Input";
-import Button from "../../../components/Button";
+import Button from "../components/Button";
+import Input from "../components/Input";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -13,11 +13,10 @@ const Form = ({ isSignInPage = true }) => {
   });
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    console.log("data :>> ", data);
+  const handleSubmit = async (e) => { 
     e.preventDefault();
     const res = await fetch(
-      `http://localhost:8000/api/${isSignInPage ? "login" : "register"}`,
+      `http://localhost:3000/api/${isSignInPage ? "login" : "register"}`,
       {
         method: "POST",
         headers: {
@@ -28,9 +27,11 @@ const Form = ({ isSignInPage = true }) => {
     );
 
     if (res.status === 400) {
-      alert("Invalid credentials");
-    } else {
       const resData = await res.json();
+      const msg = resData.message?resData.message:resData.error
+      alert(msg?msg:"Invalid credentials");
+    } else {
+      const resData = await res.json(); 
       if (resData.token) {
         localStorage.setItem("user:token", resData.token);
         localStorage.setItem("user:detail", JSON.stringify(resData.user));
