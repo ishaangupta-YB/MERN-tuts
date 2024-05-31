@@ -3,6 +3,7 @@ import axios from "axios";
 
 export const AuthContext = createContext();
 
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
