@@ -6,7 +6,6 @@ const User = require('../models/Users');
 const { check, validationResult } = require('express-validator');
 require('dotenv').config()
 
-
 router.post('/register',
     [   
         check('fullName', 'Name is required').exists(),
