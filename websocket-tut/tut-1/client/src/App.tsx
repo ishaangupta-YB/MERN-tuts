@@ -6,10 +6,10 @@ function App() {
   const [messages, setMessages] = useState<any[]>([]);
   const [message, setMessage] = useState<string>("");
   const [socket, setSocket] = useState<WebSocket | null>(null);
-  useEffect(() => {
-    console.log(messages)
+  // useEffect(() => {
+  //   console.log(messages)
    
-  }, [messages])
+  // }, [messages])
   
   useEffect(() => {
     const newSocket = new WebSocket("ws://localhost:8080");
