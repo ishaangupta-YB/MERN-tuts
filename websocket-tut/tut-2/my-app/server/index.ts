@@ -16,17 +16,19 @@ wss.on("connection", function connection(ws) {
   const clientName = `Client-${uuidv4()}`;
 
   // Notifying the just the current client who has joined
-  ws.send(
-    JSON.stringify({ type: "notification", message: `Joined Server` })
-  );
+  ws.send(JSON.stringify({ type: "notification", message: `Joined Server` }));
 
   // Notifying all the clients except current client i.e clientName has joined
   wss.clients.forEach(function each(client) {
     if (client !== ws && client.readyState === WebSocket.OPEN) {
-      client.send( JSON.stringify({ type: "notification", message: `${clientName} joined` }));
+      client.send(
+        JSON.stringify({
+          type: "notification",
+          message: `${clientName} joined`,
+        })
+      );
     }
   });
-
 
   ws.on("error", console.error);
 
@@ -61,6 +63,4 @@ wss.on("connection", function connection(ws) {
       }
     });
   });
-
-  
 });
